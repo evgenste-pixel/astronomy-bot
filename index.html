@@ -10,54 +10,60 @@
     <div id="app">
         <div id="stars"></div>
         
+        <!-- Главное меню -->
         <div id="main-menu" class="page active">
             <h1>🌌 Космический гид</h1>
             <p id="greeting">Привет, юный астроном! 👋</p>
             <div class="menu-grid">
-                <button class="menu-btn" data-target="categories">📚 Категории</button>
-                <button class="menu-btn" data-target="quiz">🎓 Тест</button>
-                <button class="menu-btn" data-target="stats">📊 Статистика</button>
-                <button class="menu-btn" data-target="achievements">🏆 Достижения</button>
+                <button class="menu-btn" data-page="categories">📚 Категории</button>
+                <button class="menu-btn" data-page="quiz">🎓 Тест</button>
+                <button class="menu-btn" data-page="stats">📊 Статистика</button>
+                <button class="menu-btn" data-page="achievements">🏆 Достижения</button>
             </div>
             <button class="daily-bonus" id="dailyBonus">🎁 Ежедневный бонус</button>
-            <p style="margin-top:20px;font-size:0.8rem;opacity:0.5;">✨ Версия 2.0</p>
         </div>
         
+        <!-- Категории -->
         <div id="categories-page" class="page">
             <h2>📚 Категории</h2>
             <div id="categories-list"></div>
-            <button class="back-btn" data-target="main-menu">🔙 Назад</button>
+            <button class="back-btn" data-page="main-menu">🔙 Назад</button>
         </div>
         
+        <!-- Статьи -->
         <div id="articles-page" class="page">
             <h2 id="category-title"></h2>
             <div id="articles-list"></div>
-            <button class="back-btn" data-target="categories">🔙 Назад</button>
+            <button class="back-btn" data-page="categories">🔙 Назад</button>
         </div>
         
+        <!-- Чтение статьи -->
         <div id="article-page" class="page">
             <h2 id="article-title"></h2>
             <div id="article-content"></div>
             <button id="mark-read-btn">✅ Прочитал</button>
-            <button class="back-btn" data-target="articles">🔙 Назад</button>
+            <button class="back-btn" data-page="articles">🔙 Назад</button>
         </div>
         
+        <!-- Статистика -->
         <div id="stats-page" class="page">
             <h2>📊 Твоя статистика</h2>
             <div id="stats-content"></div>
-            <button class="back-btn" data-target="main-menu">🔙 Назад</button>
+            <button class="back-btn" data-page="main-menu">🔙 Назад</button>
         </div>
         
+        <!-- Тест -->
         <div id="quiz-page" class="page">
             <h2>🎓 Тест</h2>
             <div id="quiz-content"></div>
-            <button class="back-btn" data-target="main-menu">🔙 Назад</button>
+            <button class="back-btn" data-page="main-menu">🔙 Назад</button>
         </div>
         
+        <!-- Достижения -->
         <div id="achievements-page" class="page">
             <h2>🏆 Достижения</h2>
             <div id="achievements-list"></div>
-            <button class="back-btn" data-target="main-menu">🔙 Назад</button>
+            <button class="back-btn" data-page="main-menu">🔙 Назад</button>
         </div>
     </div>
     <script src="script.js"></script>
