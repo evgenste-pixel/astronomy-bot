@@ -4,72 +4,661 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🚀 Космический гид</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #0b0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        #app {
+            position: relative;
+            z-index: 1;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0 8px;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            font-weight: 400;
+            color: #fff;
+        }
+        p {
+            text-align: center;
+            color: #aaa;
+            margin: 8px 0 16px;
+            line-height: 1.6;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .menu-btn, .daily-bonus, .back-btn, #mark-read-btn {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 16px 12px;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.14);
+            transform: scale(1.02);
+        }
+        .daily-bonus {
+            width: 100%;
+            margin-top: 8px;
+            background: rgba(255,215,0,0.12);
+            border-color: rgba(255,215,0,0.3);
+            min-height: 50px;
+        }
+        .daily-bonus:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .back-btn {
+            margin-top: 16px;
+            background: rgba(255,0,0,0.08);
+            border-color: rgba(255,0,0,0.15);
+            min-height: 44px;
+        }
+        #categories-list, #articles-list, #achievements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .category-item, .article-item, .achievement-item {
+            background: rgba(255,255,255,0.04);
+            padding: 14px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-left: 4px solid #f7971e;
+        }
+        .category-item:hover, .article-item:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .article-item.read {
+            opacity: 0.5;
+            border-left-color: #4caf50;
+        }
+        .article-item.read::after {
+            content: ' ✅';
+            font-size: 0.8rem;
+        }
+        #article-content {
+            background: rgba(0,0,0,0.35);
+            padding: 18px;
+            border-radius: 12px;
+            line-height: 1.8;
+            font-size: 0.95rem;
+            margin: 12px 0;
+            white-space: pre-wrap;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        #mark-read-btn {
+            background: #4caf50;
+            border-color: #4caf50;
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+        }
+        #mark-read-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .quiz-option {
+            display: block;
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin: 8px 0;
+            color: #fff;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+        .quiz-option:hover:not(:disabled) {
+            background: rgba(255,255,255,0.12);
+        }
+        .quiz-option.correct {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
+        }
+        .quiz-option.wrong {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
+        }
+        .quiz-option:disabled {
+            cursor: not-allowed;
+        }
+        .quiz-result {
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+        }
+        .quiz-result p {
+            margin: 6px 0;
+        }
+        #stats-content {
+            background: rgba(0,0,0,0.3);
+            padding: 18px;
+            border-radius: 12px;
+            line-height: 2.2;
+        }
+        .stats-line {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 4px 0;
+        }
+        .stats-label { color: #999; }
+        .stats-value { font-weight: 600; color: #ffd200; }
+        .achievement-item {
+            border-left-color: #ffd700;
+            background: rgba(255,215,0,0.05);
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <div id="stars"></div>
         
-        <!-- Главное меню -->
         <div id="main-menu" class="page active">
             <h1>🌌 Космический гид</h1>
             <p id="greeting">Привет, юный астроном! 👋</p>
             <div class="menu-grid">
-                <button class="menu-btn" data-page="categories">📚 Категории</button>
-                <button class="menu-btn" data-page="quiz">🎓 Тест</button>
-                <button class="menu-btn" data-page="stats">📊 Статистика</button>
-                <button class="menu-btn" data-page="achievements">🏆 Достижения</button>
+                <button class="menu-btn" data-target="categories">📚 Категории</button>
+                <button class="menu-btn" data-target="quiz">🎓 Тест</button>
+                <button class="menu-btn" data-target="stats">📊 Статистика</button>
+                <button class="menu-btn" data-target="achievements">🏆 Достижения</button>
             </div>
             <button class="daily-bonus" id="dailyBonus">🎁 Ежедневный бонус</button>
+            <p style="margin-top:20px;font-size:0.8rem;opacity:0.5;">✨ Версия 2.0</p>
         </div>
         
-        <!-- Категории -->
         <div id="categories-page" class="page">
             <h2>📚 Категории</h2>
             <div id="categories-list"></div>
-            <button class="back-btn" data-page="main-menu">🔙 Назад</button>
+            <button class="back-btn" data-target="main-menu">🔙 Назад</button>
         </div>
         
-        <!-- Статьи -->
         <div id="articles-page" class="page">
             <h2 id="category-title"></h2>
             <div id="articles-list"></div>
-            <button class="back-btn" data-page="categories">🔙 Назад</button>
+            <button class="back-btn" data-target="categories">🔙 Назад</button>
         </div>
         
-        <!-- Чтение статьи -->
         <div id="article-page" class="page">
             <h2 id="article-title"></h2>
             <div id="article-content"></div>
             <button id="mark-read-btn">✅ Прочитал</button>
-            <button class="back-btn" data-page="articles">🔙 Назад</button>
+            <button class="back-btn" data-target="articles">🔙 Назад</button>
         </div>
         
-        <!-- Статистика -->
         <div id="stats-page" class="page">
             <h2>📊 Твоя статистика</h2>
             <div id="stats-content"></div>
-            <button class="back-btn" data-page="main-menu">🔙 Назад</button>
+            <button class="back-btn" data-target="main-menu">🔙 Назад</button>
         </div>
         
-        <!-- Тест -->
         <div id="quiz-page" class="page">
             <h2>🎓 Тест</h2>
             <div id="quiz-content"></div>
-            <button class="back-btn" data-page="main-menu">🔙 Назад</button>
+            <button class="back-btn" data-target="main-menu">🔙 Назад</button>
         </div>
         
-        <!-- Достижения -->
         <div id="achievements-page" class="page">
             <h2>🏆 Достижения</h2>
             <div id="achievements-list"></div>
-            <button class="back-btn" data-page="main-menu">🔙 Назад</button>
+            <button class="back-btn" data-target="main-menu">🔙 Назад</button>
         </div>
     </div>
     
-    <!-- Подключаем базу знаний -->
-    <script src="data.js"></script>
-    <!-- Основной код -->
-    <script src="script.js"></script>
+    <script>
+        (function() {
+            "use strict";
+
+            // ===== БАЗА ЗНАНИЙ =====
+            const CATEGORIES = [
+                { id: 1, name: 'Солнечная система', icon: '🌞' },
+                { id: 2, name: 'Звёзды и созвездия', icon: '⭐' },
+                { id: 3, name: 'Галактики', icon: '🌌' },
+                { id: 4, name: 'Космические явления', icon: '💫' },
+                { id: 5, name: 'История астрономии', icon: '📜' },
+                { id: 6, name: 'Космические исследования', icon: '🚀' },
+                { id: 7, name: 'Астрофизика', icon: '🔬' },
+                { id: 8, name: 'Загадки космоса', icon: '🕳️' },
+                { id: 9, name: 'Наблюдения', icon: '🔭' },
+                { id: 10, name: 'Космическая техника', icon: '🛰️' }
+            ];
+
+            // Генерация статей (по 5 на категорию = 50 статей)
+            const ARTICLES = [];
+            for (let catId = 1; catId <= 10; catId++) {
+                for (let i = 1; i <= 5; i++) {
+                    const catName = CATEGORIES.find(c => c.id === catId).name;
+                    ARTICLES.push({
+                        id: ARTICLES.length + 1,
+                        category_id: catId,
+                        title: `Тема ${i} в категории ${catName}`,
+                        content: `🌟 Это увлекательная статья о космосе!\n\n` +
+                                `✨ Тема: ${catName}\n` +
+                                `🔭 Узнай много нового о космосе!\n\n` +
+                                `📝 Запомни эту информацию и поделись с друзьями!\n\n` +
+                                `🚀 Ты делаешь успехи! Продолжай изучать!`
+                    });
+                }
+            }
+
+            // Тестовые вопросы
+            const TEST_QUESTIONS = [];
+            for (let catId = 1; catId <= 10; catId++) {
+                const qs = [
+                    { question: 'Как называется наша галактика?', options: ['Млечный Путь', 'Андромеда', 'Треугольник'], correct: 0 },
+                    { question: 'Какая планета самая большая?', options: ['Юпитер', 'Сатурн', 'Нептун'], correct: 0 },
+                    { question: 'Сколько планет в Солнечной системе?', options: ['7', '8', '9'], correct: 1 },
+                    { question: 'Какая звезда ближе всего к Земле?', options: ['Полярная', 'Солнце', 'Сириус'], correct: 1 },
+                    { question: 'Что такое чёрная дыра?', options: ['Звезда', 'Область с сильной гравитацией', 'Планета'], correct: 1 }
+                ];
+                qs.forEach(q => {
+                    TEST_QUESTIONS.push({
+                        id: TEST_QUESTIONS.length + 1,
+                        category_id: catId,
+                        ...q
+                    });
+                });
+            }
+
+            // ===== ПРОГРЕСС =====
+            function getProgress() {
+                try {
+                    const data = localStorage.getItem('astro_progress');
+                    if (data) return JSON.parse(data);
+                } catch(e) {}
+                const defaultProgress = {
+                    readArticles: [],
+                    points: 0,
+                    level: 1,
+                    testsPassed: 0,
+                    achievements: [],
+                    lastBonusDate: null
+                };
+                localStorage.setItem('astro_progress', JSON.stringify(defaultProgress));
+                return defaultProgress;
+            }
+
+            function saveProgress(p) {
+                localStorage.setItem('astro_progress', JSON.stringify(p));
+            }
+
+            function addPoints(amount) {
+                const p = getProgress();
+                p.points += amount;
+                const newLevel = Math.floor(p.points / 100) + 1;
+                if (newLevel > p.level) {
+                    p.level = newLevel;
+                    p.achievements.push(`🎉 Уровень ${newLevel} достигнут!`);
+                }
+                saveProgress(p);
+                return p;
+            }
+
+            function markRead(articleId) {
+                const p = getProgress();
+                if (!p.readArticles.includes(articleId)) {
+                    p.readArticles.push(articleId);
+                    addPoints(10);
+                    const count = p.readArticles.length;
+                    if (count === 5) p.achievements.push('🌱 Первые шаги');
+                    if (count === 15) p.achievements.push('📚 Знаток планет');
+                    if (count === 30) p.achievements.push('✨ Звёздный странник');
+                    if (count === 50) p.achievements.push('🏆 Мастер Вселенной');
+                    saveProgress(p);
+                    return true;
+                }
+                return false;
+            }
+
+            function claimDailyBonus() {
+                const p = getProgress();
+                const today = new Date().toDateString();
+                if (p.lastBonusDate === today) return false;
+                p.lastBonusDate = today;
+                addPoints(15);
+                saveProgress(p);
+                return true;
+            }
+
+            function getStats() {
+                const p = getProgress();
+                return {
+                    read: p.readArticles.length,
+                    total: ARTICLES.length,
+                    points: p.points,
+                    level: p.level,
+                    tests: p.testsPassed
+                };
+            }
+
+            function getUnread(categoryId) {
+                const read = getProgress().readArticles;
+                return ARTICLES.filter(a => a.category_id === categoryId && !read.includes(a.id));
+            }
+
+            function getRandomQuestions(categoryId, count = 5) {
+                const pool = TEST_QUESTIONS.filter(q => q.category_id === categoryId);
+                const shuffled = pool.sort(() => Math.random() - 0.5);
+                return shuffled.slice(0, count);
+            }
+
+            // ===== ИНТЕРФЕЙС =====
+            let currentCategoryId = null;
+
+            function showPage(id) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                const page = document.getElementById(id);
+                if (page) page.classList.add('active');
+            }
+
+            function renderCategories() {
+                const container = document.getElementById('categories-list');
+                if (!container) return;
+                container.innerHTML = '';
+                CATEGORIES.forEach(cat => {
+                    const div = document.createElement('div');
+                    div.className = 'category-item';
+                    div.textContent = `${cat.icon} ${cat.name}`;
+                    div.onclick = () => showArticles(cat.id);
+                    container.appendChild(div);
+                });
+                showPage('categories-page');
+            }
+
+            function showArticles(categoryId) {
+                currentCategoryId = categoryId;
+                const cat = CATEGORIES.find(c => c.id === categoryId);
+                if (!cat) return;
+                const titleEl = document.getElementById('category-title');
+                if (titleEl) titleEl.textContent = `${cat.icon} ${cat.name}`;
+                const container = document.getElementById('articles-list');
+                if (!container) return;
+                container.innerHTML = '';
+                const read = getProgress().readArticles;
+                ARTICLES.filter(a => a.category_id === categoryId).forEach(a => {
+                    const div = document.createElement('div');
+                    div.className = 'article-item' + (read.includes(a.id) ? ' read' : '');
+                    div.textContent = a.title;
+                    div.onclick = () => showArticle(a.id);
+                    container.appendChild(div);
+                });
+                showPage('articles-page');
+            }
+
+            function showArticle(articleId) {
+                const a = ARTICLES.find(art => art.id === articleId);
+                if (!a) return;
+                const titleEl = document.getElementById('article-title');
+                if (titleEl) titleEl.textContent = a.title;
+                const contentEl = document.getElementById('article-content');
+                if (contentEl) contentEl.textContent = a.content;
+                const btn = document.getElementById('mark-read-btn');
+                if (!btn) return;
+                const read = getProgress().readArticles;
+                if (read.includes(articleId)) {
+                    btn.disabled = true;
+                    btn.textContent = '✅ Уже прочитано';
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = '✅ Прочитал (+10 очков)';
+                    btn.onclick = () => {
+                        if (markRead(articleId)) {
+                            btn.disabled = true;
+                            btn.textContent = '✅ Прочитано! +10 очков';
+                            setTimeout(() => showArticles(a.category_id), 500);
+                        }
+                    };
+                }
+                showPage('article-page');
+            }
+
+            function showStats() {
+                const s = getStats();
+                const container = document.getElementById('stats-content');
+                if (!container) return;
+                container.innerHTML = `
+                    <div class="stats-line"><span class="stats-label">📖 Прочитано статей</span><span class="stats-value">${s.read} / ${s.total}</span></div>
+                    <div class="stats-line"><span class="stats-label">⭐️ Уровень</span><span class="stats-value">${s.level}</span></div>
+                    <div class="stats-line"><span class="stats-label">✨ Очки знаний</span><span class="stats-value">${s.points}</span></div>
+                    <div class="stats-line"><span class="stats-label">🎓 Пройдено тестов</span><span class="stats-value">${s.tests}</span></div>
+                    <div class="stats-line"><span class="stats-label">🚀 До следующего уровня</span><span class="stats-value">${100 - (s.points % 100)} очков</span></div>
+                `;
+                showPage('stats-page');
+            }
+
+            function showAchievements() {
+                const p = getProgress();
+                const container = document.getElementById('achievements-list');
+                if (!container) return;
+                if (p.achievements.length === 0) {
+                    container.innerHTML = '<p>Пока нет достижений. Читай статьи и зарабатывай награды!</p>';
+                } else {
+                    container.innerHTML = p.achievements.map(a => `<div class="achievement-item">${a}</div>`).join('');
+                }
+                showPage('achievements-page');
+            }
+
+            function startQuiz() {
+                let html = '<p>Выбери категорию для теста:</p>';
+                CATEGORIES.forEach(cat => {
+                    const unread = getUnread(cat.id);
+                    if (unread.length < 2) {
+                        html += `<button class="quiz-option" style="opacity:0.4;" disabled>${cat.icon} ${cat.name} (нужно прочитать 2 статьи)</button>`;
+                    } else {
+                        html += `<button class="quiz-option" onclick="window.startQuizCategory(${cat.id})">${cat.icon} ${cat.name}</button>`;
+                    }
+                });
+                const container = document.getElementById('quiz-content');
+                if (container) container.innerHTML = html;
+                showPage('quiz-page');
+            }
+
+            // Делаем функцию глобальной для вызова из onclick
+            window.startQuizCategory = function(categoryId) {
+                const questions = getRandomQuestions(categoryId, 5);
+                if (questions.length === 0) {
+                    alert('В этой категории пока нет вопросов.');
+                    return;
+                }
+
+                let current = 0;
+                let score = 0;
+                let answered = false;
+                const container = document.getElementById('quiz-content');
+                if (!container) return;
+
+                function renderQuestion() {
+                    if (current >= questions.length) {
+                        const p = getProgress();
+                        p.testsPassed += 1;
+                        saveProgress(p);
+                        const points = score * 10;
+                        addPoints(points);
+                        container.innerHTML = `
+                            <div class="quiz-result">
+                                <p>🎓 Тест завершён!</p>
+                                <p>Правильных ответов: ${score} из ${questions.length}</p>
+                                <p>➕ Получено очков: ${points}</p>
+                                <button class="back-btn" onclick="window.startQuiz()">🔙 К тестам</button>
+                                <button class="back-btn" onclick="showPage('main-menu')">🏠 Главное меню</button>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const q = questions[current];
+                    let html = `<p><strong>Вопрос ${current+1} из ${questions.length}</strong></p><p>${q.question}</p>`;
+                    q.options.forEach((opt, idx) => {
+                        html += `<button class="quiz-option" data-optindex="${idx}">${opt}</button>`;
+                    });
+                    container.innerHTML = html;
+                    answered = false;
+
+                    container.querySelectorAll('.quiz-option').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            if (answered) return;
+                            answered = true;
+                            const idx = parseInt(this.dataset.optindex);
+                            const isCorrect = (idx === q.correct);
+                            if (isCorrect) score++;
+
+                            const all = container.querySelectorAll('.quiz-option');
+                            all.forEach((b, i) => {
+                                if (i === q.correct) b.classList.add('correct');
+                                else if (i === idx && !isCorrect) b.classList.add('wrong');
+                                b.disabled = true;
+                            });
+
+                            setTimeout(() => {
+                                current++;
+                                renderQuestion();
+                            }, 1200);
+                        });
+                    });
+                }
+                renderQuestion();
+            };
+
+            // Делаем startQuiz глобальной
+            window.startQuiz = startQuiz;
+
+            // ===== НАВИГАЦИЯ =====
+            document.querySelectorAll('[data-target]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    if (target === 'main-menu') {
+                        const p = getProgress();
+                        const today = new Date().toDateString();
+                        const bonusBtn = document.getElementById('dailyBonus');
+                        if (bonusBtn) {
+                            if (p.lastBonusDate === today) {
+                                bonusBtn.disabled = true;
+                                bonusBtn.textContent = '🎁 Бонус получен сегодня';
+                            } else {
+                                bonusBtn.disabled = false;
+                                bonusBtn.textContent = '🎁 Ежедневный бонус (+15 очков)';
+                                bonusBtn.onclick = () => {
+                                    if (claimDailyBonus()) {
+                                        bonusBtn.disabled = true;
+                                        bonusBtn.textContent = '✅ Бонус получен! +15 очков';
+                                        const greet = document.getElementById('greeting');
+                                        if (greet) greet.textContent = `У тебя ${getProgress().points} очков! 🚀`;
+                                    }
+                                };
+                            }
+                        }
+                        showPage('main-menu');
+                    } else if (target === 'categories') {
+                        renderCategories();
+                    } else if (target === 'articles') {
+                        if (currentCategoryId) showArticles(currentCategoryId);
+                        else showPage('main-menu');
+                    } else if (target === 'quiz') {
+                        startQuiz();
+                    } else if (target === 'stats') {
+                        showStats();
+                    } else if (target === 'achievements') {
+                        showAchievements();
+                    }
+                });
+            });
+
+            // ===== ЗВЁЗДНЫЙ ФОН =====
+            function createStars() {
+                const container = document.getElementById('stars');
+                if (!container) return;
+                for (let i = 0; i < 200; i++) {
+                    const star = document.createElement('div');
+                    star.style.cssText = `
+                        position: absolute;
+                        width: ${Math.random() * 3 + 1}px;
+                        height: ${Math.random() * 3 + 1}px;
+                        background: #fff;
+                        border-radius: 50%;
+                        top: ${Math.random() * 100}%;
+                        left: ${Math.random() * 100}%;
+                        opacity: ${Math.random() * 0.8 + 0.2};
+                        animation: twinkle ${2 + Math.random() * 4}s infinite alternate;
+                    `;
+                    container.appendChild(star);
+                }
+            }
+            // Добавляем ключевые кадры анимации
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `@keyframes twinkle { from { opacity: 0.2; } to { opacity: 1; } }`;
+            document.head.appendChild(styleSheet);
+
+            // ===== СТАРТ =====
+            createStars();
+            const p = getProgress();
+            const greet = document.getElementById('greeting');
+            if (greet) greet.textContent = `У тебя ${p.points} очков! 🚀`;
+        })();
+    </script>
 </body>
 </html>
