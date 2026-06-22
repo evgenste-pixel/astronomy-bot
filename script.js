@@ -130,6 +130,8 @@ function getRandomQuestions(categoryId, count = 5) {
 }
 
 // ===== ИНТЕРФЕЙС =====
+let currentCategoryId = null; // ← НОВАЯ ПЕРЕМЕННАЯ для хранения текущей категории
+
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -149,6 +151,7 @@ function renderCategories() {
 }
 
 function showArticles(categoryId) {
+    currentCategoryId = categoryId; // ← ЗАПОМИНАЕМ КАТЕГОРИЮ
     const cat = CATEGORIES.find(c => c.id === categoryId);
     document.getElementById('category-title').textContent = `${cat.icon} ${cat.name}`;
     const container = document.getElementById('articles-list');
@@ -181,6 +184,7 @@ function showArticle(articleId) {
             if (markRead(articleId)) {
                 btn.disabled = true;
                 btn.textContent = '✅ Прочитано! +10 очков';
+                // Возвращаемся к списку статей через 0.5 секунды
                 setTimeout(() => showArticles(a.category_id), 500);
             }
         };
@@ -291,11 +295,12 @@ function startQuizCategory(categoryId) {
     renderQuestion();
 }
 
-// ===== НАВИГАЦИЯ =====
+// ===== НАВИГАЦИЯ (исправлено) =====
 document.querySelectorAll('[data-target]').forEach(btn => {
     btn.addEventListener('click', function() {
         const target = this.dataset.target;
         if (target === 'main-menu') {
+            // Обновляем бонус
             const p = getProgress();
             const today = new Date().toDateString();
             const bonusBtn = document.getElementById('dailyBonus');
@@ -316,6 +321,13 @@ document.querySelectorAll('[data-target]').forEach(btn => {
             showPage('main-menu');
         } else if (target === 'categories') {
             renderCategories();
+        } else if (target === 'articles') {    // ← НОВОЕ УСЛОВИЕ
+            if (currentCategoryId) {
+                showArticles(currentCategoryId);
+            } else {
+                // Если категория не сохранена, возвращаемся на главную
+                showPage('main-menu');
+            }
         } else if (target === 'quiz') {
             startQuiz();
         } else if (target === 'stats') {
