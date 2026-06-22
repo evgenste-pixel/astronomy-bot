@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background: #0b0e1a;
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+#stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+#app {
+    position: relative;
+    z-index: 1;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+}
+
+.page {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 10px 0 8px;
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    font-weight: 400;
+    color: #fff;
+}
+
+p {
+    text-align: center;
+    color: #aaa;
+    margin: 8px 0 16px;
+    line-height: 1.6;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.menu-btn, .daily-bonus, .back-btn, #mark-read-btn {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 16px 12px;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.menu-btn:hover {
+    background: rgba(255,255,255,0.14);
+    transform: scale(1.02);
+}
+.daily-bonus {
+    width: 100%;
+    margin-top: 8px;
+    background: rgba(255,215,0,0.12);
+    border-color: rgba(255,215,0,0.3);
+    min-height: 50px;
+}
+.daily-bonus:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.daily-bonus:not(:disabled):hover {
+    background: rgba(255,215,0,0.2);
+}
+
+.back-btn {
+    margin-top: 16px;
+    background: rgba(255,0,0,0.08);
+    border-color: rgba(255,0,0,0.15);
+    min-height: 44px;
+}
+
+#categories-list, #articles-list, #achievements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.category-item, .article-item, .achievement-item {
+    background: rgba(255,255,255,0.04);
+    padding: 14px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    border-left: 4px solid #f7971e;
+}
+.category-item:hover, .article-item:hover {
+    background: rgba(255,255,255,0.08);
+}
+.article-item.read {
+    opacity: 0.5;
+    border-left-color: #4caf50;
+}
+.article-item.read::after {
+    content: ' ✅';
+    font-size: 0.8rem;
+}
+
+#article-content {
+    background: rgba(0,0,0,0.35);
+    padding: 18px;
+    border-radius: 12px;
+    line-height: 1.8;
+    font-size: 0.95rem;
+    margin: 12px 0;
+    white-space: pre-wrap;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+#mark-read-btn {
+    background: #4caf50;
+    border-color: #4caf50;
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+}
+#mark-read-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.quiz-option {
+    display: block;
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin: 8px 0;
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: left;
+}
+.quiz-option:hover:not(:disabled) {
+    background: rgba(255,255,255,0.12);
+}
+.quiz-option.correct {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: #4caf50;
+}
+.quiz-option.wrong {
+    background: rgba(244, 67, 54, 0.3);
+    border-color: #f44336;
+}
+.quiz-option:disabled {
+    cursor: not-allowed;
+}
+
+.quiz-result {
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+}
+.quiz-result p {
+    margin: 6px 0;
+}
+
+#stats-content {
+    background: rgba(0,0,0,0.3);
+    padding: 18px;
+    border-radius: 12px;
+    line-height: 2.2;
+}
+.stats-line {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 4px 0;
+}
+.stats-label { color: #999; }
+.stats-value { font-weight: 600; color: #ffd200; }
+
+.achievement-item {
+    border-left-color: #ffd700;
+    background: rgba(255,215,0,0.05);
+}
