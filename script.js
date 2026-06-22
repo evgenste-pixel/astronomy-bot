@@ -1,4 +1,3 @@
-// ===== БАЗА ЗНАНИЙ =====
 const CATEGORIES = [
     { id: 1, name: 'Солнечная система', icon: '🌞' },
     { id: 2, name: 'Звёзды и созвездия', icon: '⭐' },
@@ -294,12 +293,11 @@ function startQuizCategory(categoryId) {
     renderQuestion();
 }
 
-// ===== НАВИГАЦИЯ (исправлено) =====
+// ===== НАВИГАЦИЯ =====
 document.querySelectorAll('[data-target]').forEach(btn => {
     btn.addEventListener('click', function() {
         const target = this.dataset.target;
         if (target === 'main-menu') {
-            // Обновляем бонус
             const p = getProgress();
             const today = new Date().toDateString();
             const bonusBtn = document.getElementById('dailyBonus');
